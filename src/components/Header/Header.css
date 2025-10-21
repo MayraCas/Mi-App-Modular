@@ -1,0 +1,16 @@
+.app-header {
+    background-color: #9c6dc2;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    font-size: 24px;
+    font-family: serif;
+}
+
+.theme-button-container {
+  position: absolute;
+  top: 5px;
+  right: 20px;
+  padding: 10px;
+}
+

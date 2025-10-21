@@ -1,7 +1,3 @@
-.App {
-  text-align: center;
-}
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -35,4 +31,48 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Estilos nuevos */
+
+.App {
+  text-align: center;
+  background-color: #ffffff; /* Modo Claro por defecto */
+  color: #282c34;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Estilos del Modo Oscuro */
+.App.dark {
+  background-color: #282c34;
+  color: #ffffff;
+}
+
+/* Puedes hacer lo mismo para otros componentes */
+.App.dark .app-header {
+  background-color: #000000;
+}
+
+.App.dark .user-card {
+  background-color: #271d2c;
+  border-color: #555;
+}
+
+.App.dark .user-card h3 {
+  color: #f1f1f1;
+}
+
+.App.dark .theme-switcher {
+  background-color: #41364d;
+}
+
+.App.dark .todo-list-container {
+  background-color: #000000;
+  color: white;
+}
+
+.App.dark .todo-list-container li {
+  background-color: #594a69;
+  border-bottom: 1px solid #7b6891;
 }

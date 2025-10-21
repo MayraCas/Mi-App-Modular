@@ -1,0 +1,73 @@
+.todo-list-container {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 500px;
+    background-color: #e2cff1;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.add-task-form {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.add-task-form input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.complete-button {
+  background-color: #3c9ae7;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.add-task-form button {
+  padding: 10px 15px;
+  border: none;
+  background-color: #7a4b96;
+  color: white;
+  border-radius: 4px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.todo-list-container ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.todo-list-container li {
+  padding: 10px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.todo-list-item-complete {
+  text-decoration: line-through;
+  color: #99889b;
+}
+
+.todo-list-item-incomplete {
+  color: #000000;
+}
+
+.complete-task {
+  background-color:#7a4b96
+}
