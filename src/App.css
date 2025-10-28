@@ -76,3 +76,8 @@
   background-color: #594a69;
   border-bottom: 1px solid #7b6891;
 }
+
+.App.dark .home-container {
+  background-color: #000000;
+  color: white;
+}

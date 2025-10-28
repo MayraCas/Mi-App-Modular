@@ -1,14 +1,23 @@
 import React from 'react';
 import './Header.css';
 import ThemeSwitcher from '../ThemeSwitcher'; // Importamos el interruptor de tema
+import { Link } from 'react-router-dom';
+import { PiFlowerTulip } from "react-icons/pi";
+import Logo from './logoflower.jpg';
 
 const Header = () => {
   return (
     <header className="app-header">
-      <h1>Mi Aplicación Modular</h1>
-      <div className="theme-button-container">
-        <ThemeSwitcher /> {/* Añadimos el interruptor de tema */}
+      <div className="logo-nav">
+      <img src={Logo} alt="flor morada" className="logo-f" style={{ width: '50px', height: '50px', borderRadius: '100%' }} />
+        <nav>
+          {/* Usamos <Link> en lugar de <a href=""> */}
+          <Link to="/">Inicio</Link>
+          <Link to="/tareas">Tareas</Link>
+          <Link to="/directorio">Directorio</Link>
+        </nav>
       </div>
+      <ThemeSwitcher />
     </header>
   );
 };

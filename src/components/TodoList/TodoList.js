@@ -1,60 +1,118 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import './TodoList.css';
 import TodoItem from '../TodoItem/TodoItem';
+import { db } from '../../FirebaseConfig'; // <-- Importa nuestra config
+import { collection, query, orderBy, onSnapshot, addDoc, doc, updateDoc, deleteDoc, serverTimestamp, getDoc } from "firebase/firestore"; // <-- Importa funciones de Firestore
 
 const TodoList = () => {
     // Hook useState para guardar la lista de tareas
-    const [tasks, setTasks] = useState([
-        { id: 1, text: 'Aprende React', isComplete: false},
-        { id: 2, text: 'Construir una App', isComplete: false},
-        { id: 3, text: 'Modularizar componentes', isComplete: false}
-    ]);
+    const [tasks, setTasks] = useState([]);
 
     // Hook para el campo de texto del formulario
     const [inputValue, setInputValue] = useState('');
 
+    // useEffect se ejecutará cuando el componente se monte
+    useEffect(() => {
+      // 1. Creamos una referencia a nuestra colección "tasks" en Firestore
+      const collectionRef = collection(db, "tasks");
+
+      // 2. Creamos una consulta (query) para ordenar las tareas por fecha
+      const q = query(collectionRef, orderBy("createdAt", "asc"));
+
+      // 3. onSnapshot es el ¡ESCUCHADOR EN TIEMPO REAL!
+      // Se dispara una vez al inicio y luego CADA VEZ que los datos cambian
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const newTasks = [];
+        querySnapshot.forEach((doc) => {
+          newTasks.push({ 
+            ...doc.data(), 
+            id: doc.id // El ID del documento es importante
+          });
+        });
+        setTasks(newTasks); // Actualizamos nuestro estado de React
+      });
+
+      // Esta función de limpieza se ejecuta cuando el componente se "desmonta"
+      // Evita fugas de memoria
+      return () => unsubscribe();
+
+    }, []); // El '[]' asegura que esto se ejecute solo una vez
+
     //Función para manejar el envío del formulario
-    const handleAddTask = (e) => {
-
-        // Evita que la página se recargue
-        e.preventDefault();
-
-        // Evita que se añadan tareas vacías
-        if (inputValue.trim() === '') return;
-        
-        const newTask = {
-            // Asignamos un id único basado en la fecha actual
-            id: Date.now(),
-            // Asiganamos el valor del input a la nueva tarea
-            text: inputValue,
-            isComplete: false
-        };
-
-        // Añadimos la nueva tarea a la lista
-        setTasks([...tasks, newTask]);
-
-        // Limpiamos el campo de texto
-        setInputValue('');
-
+    const handleAddTask = async (e) => { // La hacemos 'async'
+      e.preventDefault();
+      if (inputValue.trim() === '') return;
+    
+      // ¡En lugar de solo 'setTasks', escribimos en la BD!
+      await addDoc(collection(db, "tasks"), {
+        text: inputValue,
+        isComplete: false,
+        createdAt: serverTimestamp() // Marca de tiempo de Firebase
+      });
+    
+      setInputValue('');
+      // NOTA: No necesitamos 'setTasks' aquí.
+      // ¡'onSnapshot' detectará el nuevo documento y actualizará el estado por nosotros!
     };
     
 
     // Función para marcar/desmarcar una tarea
-    const handleToggleComplete = (idToToggle) => {
-        setTasks(
-        tasks.map(task => 
-            task.id === idToToggle 
-            ? { ...task, isComplete: !task.isComplete } // Crea un nuevo objeto
-            : task // Devuelve el objeto original
-        )
+    const handleToggleComplete = async (task) => { // Pasamos el objeto 'task' entero
+      // 1. Creamos una referencia al documento específico por su ID
+      const taskRef = doc(db, "tasks", task.id);
+
+      /*
+      if (!task.isComplete) {
+        // Se agrega a la coleccion de tareas completadas
+        await addDoc(collection(db, "completedHistory"), {
+          taskId: task.id,
+          text: task.text,
+          completedAt: serverTimestamp()
+        });
+
+        // Actualizamos el estado de la tarea
+        await updateDoc(taskRef, {
+          isComplete: true // Invertimos el valor
+        });
+      } else {
+        // Si se desmarca, se elimina del historial
+        // Se busca la tarea en el historial de tareas completadas
+        const historyQuery = query(
+          collection(db, "completedHistory"),
+          where("taskId", "==", task.id)
         );
+
+        const historySnapshot = await getDocs(historyQuery);
+
+        // Se elimina el registro de la tarea
+        historySnapshot.forEach(async (historyDoc) => {
+          await deleteDoc(doc(db, "completedHistory", historyDoc.id));
+        });
+
+        await updateDoc(taskRef, {
+          isComplete: false
+        });
+      }*/
+
+      await updateDoc(taskRef, {
+        isComplete: true // Invertimos el valor
+      });
+    
+      
+      // De nuevo, ¡onSnapshot se encarga de actualizar la UI!
     };
 
     // Función para eliminar una tarea
-    const handleDeleteTask = (idToDelete) => {
-        setTasks(
-        tasks.filter(task => task.id !== idToDelete)
-        );
+    const handleDeleteTask = async (idToDelete) => {
+      // Creamos una referencia al documento
+      const taskRef = doc(db, "tasks", idToDelete);
+
+      //const taskSnapshot = await getDoc(taskRef);
+
+    
+      // Borramos el documento
+      await deleteDoc(taskRef);
+      // ¡onSnapshot se encarga del resto!
     };
 
     return (
@@ -80,8 +138,9 @@ const TodoList = () => {
           <TodoItem 
             key={task.id}
             task={task}
-            onToggleComplete={handleToggleComplete}
-            onDeleteTask={handleDeleteTask}
+            // ¡Pasa la función correctamente!
+            onToggleComplete={() => handleToggleComplete(task)} // Pasa el objeto 'task'
+            onDeleteTask={handleDeleteTask} // Esta ya pasaba solo el ID
           />
         ))}
       </ul>
