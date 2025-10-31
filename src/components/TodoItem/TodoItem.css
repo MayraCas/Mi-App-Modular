@@ -4,13 +4,13 @@
   align-items: center;
   padding: 10px;
   background-color: #fff;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #eadded;
 }
 
 /* Estilo cuando el tema es oscuro */
 .App.dark .todo-item {
-  background-color: #3a3f4b;
-  border-color: #555;
+  background-color: #443652;
+  border-bottom: 1px solid #7b6891;
 }
 
 .task-content {
@@ -25,7 +25,7 @@
 
 .todo-item.completed .task-text {
   text-decoration: line-through;
-  color: #999;
+  color: #a88bad;
 }
 
 .delete-btn {

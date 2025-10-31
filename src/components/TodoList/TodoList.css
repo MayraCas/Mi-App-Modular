@@ -1,10 +1,11 @@
-.todo-list-container {
+.todo-list-container, .list-completed-history, .list-deleted-history {
     margin: 20px auto;
     padding: 20px;
     max-width: 500px;
     background-color: #e2cff1;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: black;
 }
 
 .add-task-form {
@@ -48,26 +49,22 @@
   cursor: pointer;
 }
 
-.todo-list-container ul {
+.ul {
   list-style-type: none;
   padding: 0;
 }
 
-.todo-list-container li {
+.items-history {
   padding: 10px;
   background-color: #fff;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #eadded;
+  color: black;
+  list-style-type: none;
+  text-align: left;
 }
 
-.todo-list-item-complete {
-  text-decoration: line-through;
-  color: #99889b;
-}
-
-.todo-list-item-incomplete {
-  color: #000000;
-}
-
-.complete-task {
-  background-color:#7a4b96
+.App.dark .items-history {
+  background-color: #443652;
+  border-bottom: 1px solid #7b6891;
+  color: white;
 }

@@ -67,12 +67,12 @@
   background-color: #41364d;
 }
 
-.App.dark .todo-list-container {
+.App.dark .todo-list-container, .App.dark .list-completed-history, .App.dark .list-deleted-history {
   background-color: #000000;
   color: white;
 }
 
-.App.dark .todo-list-container li {
+.App.dark li {
   background-color: #594a69;
   border-bottom: 1px solid #7b6891;
 }
