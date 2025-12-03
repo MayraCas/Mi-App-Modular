@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import TodoList from './TodoList';
 
 // Definimos funciones vacías: () => {}
@@ -24,16 +25,42 @@ jest.mock('firebase/firestore', () => ({
   } 
 }));
 
-jest.mock('../TodoItem/TodoItem', () => () => <div>Item Falso</div>);
+// Mock para el TodoItem
+jest.mock('../TodoItem/TodoItem', () => {
+  return function DummyTodoItem(props) {
+    return <li data-testid="todo-item">{props.task.text}</li>;
+  };
+});
 
-test('TodoList se renderiza sin explotar', () => {
-  // 1. Renderizamos
-  render(<TodoList />);
+// Tests para el componente TodoList
+describe('Componente TodoList', () => {
 
-  // Verificamos que el título aparezca.
-  // Si esto pasa, significa que el componente cargó bien.
-  expect(screen.getByText('Mi Lista de Tareas')).toBeInTheDocument();
+  test('Debe renderizar el título correctamente', () => {
+    render(<TodoList />);
+    const titleElement = screen.getByText(/Mi Lista de Tareas/i);
+    expect(titleElement).toBeInTheDocument();
+  });
+
+  test('Debe renderizar el input y el botón de añadir', () => {
+    render(<TodoList />);
+    const inputElement = screen.getByPlaceholderText(/Añade una nueva tarea.../i);
+    const buttonElement = screen.getByRole('button', { name: /Añadir/i });
+    expect(inputElement).toBeInTheDocument();
+    expect(buttonElement).toBeInTheDocument();
+  });
+
+  test('Debe permitir escribir en el input', () => {
+    render(<TodoList />);
+    const inputElement = screen.getByPlaceholderText(/Añade una nueva tarea.../i);
+    fireEvent.change(inputElement, { target: { value: 'Comprar leche' } });
+    expect(inputElement.value).toBe('Comprar leche');
+  });
   
-  // Verificamos que los historiales estén vacíos (porque el mock no devuelve datos)
-  expect(screen.getByText('No hay tareas competadas')).toBeInTheDocument();
+  test('Debe mostrar las secciones de Historiales', () => {
+      render(<TodoList />);
+      const historyCompletedTitle = screen.getByText(/Historial de Tareas Completadas/i);
+      const historyDeletedTitle = screen.getByText(/Historial de Tareas Eliminadas/i);
+      expect(historyCompletedTitle).toBeInTheDocument();
+      expect(historyDeletedTitle).toBeInTheDocument();
+  });
 });
